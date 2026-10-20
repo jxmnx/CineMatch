@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#09090d">
+    <title>CineMatch | Discover Your Next Favourite</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <a href="/" class="brand">CINE<span>MATCH</span><span class="brand-dot">.</span></a>
+        <span class="nav-label">YOUR NEXT FAVOURITE FILM AWAITS</span>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <span class="eyebrow"><span class="live-dot"></span> YOUR PERSONAL MOVIE DISCOVERY</span>
+                <h1>Find your next<br> <span>obsession.</span></h1>
+                <p>One movie you love. Five new movies to discover.</p>
+
+                <form method="POST" class="search-form">
+                    <div class="search-container">
+                        <span class="search-icon" aria-hidden="true">⌕</span>
+                        <input
+                            type="text"
+                            id="movie-input"
+                            name="movie_title"
+                            placeholder="Search a movie you love..."
+                            value="{{ search_query }}"
+                            autocomplete="off"
+                            required
+                            aria-label="Movie title"
+                            aria-controls="suggestions"
+                        >
+                        <div id="suggestions" class="suggestions"></div>
+                    </div>
+                    <button type="submit">Discover <span>→</span></button>
+                </form>
+
+                <div class="hero-note">
+                    <span>✦</span> Discover movies based on what you love
+                </div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <div class="art-circle"></div>
+                <div class="art-ring"></div>
+                <div class="art-star star-one">✦</div>
+                <div class="art-star star-two">✧</div>
+                <div class="art-caption">YOUR NEXT<br>GREAT STORY<br>STARTS HERE.</div>
+                <div class="art-number">CM / 01</div>
+            </div>
+        </section>
+
+        {% if error %}
+            <div class="error"><span>!</span> {{ error }}</div>
+        {% endif %}
+
+        {% if recommendations %}
+            <section class="results-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">PICKED FOR YOU</span>
+                        <h2>Because you watched <span>{{ search_query }}</span></h2>
+                        <p class="section-description">Your next movie night starts here.</p>
+                    </div>
+                    <div class="row-controls">
+                        <button type="button" class="row-arrow" data-direction="left" aria-label="Scroll movies left">←</button>
+                        <button type="button" class="row-arrow" data-direction="right" aria-label="Scroll movies right">→</button>
+                    </div>
+                </div>
+
+                <div class="movie-row" id="recommendation-row">
+                    {% for movie in recommendations %}
+                        <article class="movie-card">
+                            <div class="poster-wrap">
+                                {% if movie.poster %}
+                                    <img
+                                        class="movie-poster"
+                                        src="https://image.tmdb.org/t/p/w500{{ movie.poster }}"
+                                        alt="{{ movie.title }} poster"
+                                        loading="lazy"
+                                        onerror="this.onerror=null; this.src='/static/no-poster.svg';"
+                                    >
+                                {% else %}
+                                    <img
+                                        class="movie-poster no-poster"
+                                        src="/static/no-poster.svg"
+                                        alt="Poster unavailable for {{ movie.title }}"
+                                        loading="lazy"
+                                    >
+                                {% endif %}
+                                <div class="poster-overlay">
+                                    <span class="match-label">{{ movie.similarity }}% MATCH</span>
+                                </div>
+                            </div>
+
+                            <div class="movie-info">
+                                <h3>{{ movie.title }}</h3>
+                                <p class="movie-genres">{{ movie.genres }}</p>
+                                <div class="movie-meta">
+                                    <span class="rating">★ {{ movie.rating }}</span>
+                                    <span class="match-score">{{ movie.similarity }}% match</span>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <section class="discover-section">
+                <span class="section-kicker">THE MOVIE NIGHT EDIT</span>
+                <h2>Every great story starts <span>somewhere.</span></h2>
+                <p>Search for a movie you enjoy and let CineMatch find your next favourite.</p>
+                <div class="genre-chips" aria-label="Popular movie genres">
+                    <span>✦ Action</span>
+                    <span>✦ Adventure</span>
+                    <span>✦ Drama</span>
+                    <span>✦ Sci-Fi</span>
+                    <span>✦ Thriller</span>
+                </div>
+            </section>
+        {% endif %}
+      
+<!-- Movie Details Popup -->
+<div id="movie-modal" class="movie-modal" aria-hidden="true">
+    <div class="movie-modal-backdrop" data-close-modal></div>
+
+    <div
+        class="movie-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-movie-title"
+        tabindex="-1"
+    >
+        <button
+            type="button"
+            class="movie-modal-close"
+            data-close-modal
+            aria-label="Close movie details"
+        >&times;</button>
+
+        <div class="movie-modal-poster">
+            <img id="modal-movie-poster" src="" alt="">
+        </div>
+
+        <div class="movie-modal-info">
+            <span class="section-kicker">MOVIE DETAILS</span>
+            <h2 id="modal-movie-title">Movie title</h2>
+
+            <div class="movie-modal-meta">
+                <span id="modal-movie-rating"></span>
+                <span id="modal-movie-match"></span>
+            </div>
+
+            <p id="modal-movie-genres"></p>
+            <button type="button" id="modal-watch-trailer" class="watch-trailer-btn">
+    ▶ Watch Trailer
+</button>
+        </div>
+    </div>
+</div>
+  
+    </main>
+
+    <footer class="footer">
+        <a href="/" class="brand footer-brand">CINE<span>MATCH</span><span class="brand-dot">.</span></a>
+        <p>Made for movie lovers. Find your next favourite.</p>
+        <span class="footer-mark">ROLL CREDITS ✦</span>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

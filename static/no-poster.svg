@@ -1,0 +1,6 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+  <rect width="300" height="450" fill="#20202a"/>
+  <text x="150" y="190" text-anchor="middle" font-family="Arial" font-size="64" fill="#ff914d">🎬</text>
+  <text x="150" y="240" text-anchor="middle" font-family="Arial" font-size="22" fill="#ffffff">CineMatch</text>
+  <text x="150" y="275" text-anchor="middle" font-family="Arial" font-size="15" fill="#ccccd4">Poster unavailable</text>
+</svg>
